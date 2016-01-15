@@ -44,7 +44,6 @@ public class MainSamplerActivity extends AppCompatActivity {
     WifiScanReceiver wifiReciever;
 
     private Toolbar mToolbar;
-    private CoordinatorLayout coordinatorLayout;
     private Button btnSimpleSnackbar, btnActionCallback, btnCustomView;
 
 
@@ -77,6 +76,8 @@ public class MainSamplerActivity extends AppCompatActivity {
                 // this thread waiting for the user's response!
 
                 // After the user sees the explanation, try again to request the permission.
+                CoordinatorLayout coordinatorLayout;
+                coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
                 Snackbar snackbar = Snackbar
                         .make( coordinatorLayout , R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                         .setAction(android.R.string.ok, new View.OnClickListener() {
@@ -86,6 +87,7 @@ public class MainSamplerActivity extends AppCompatActivity {
                                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
                             }
                         });
+                snackbar.show();
 
             } else {
                 Log.i(TAG, "onCreate: No need to ask, we can just request");
@@ -99,6 +101,8 @@ public class MainSamplerActivity extends AppCompatActivity {
                 // REQUEST_FINE_LOCATON is an app-defined int constant.
                 // Use it in the callback method that gets the result of the request.
             }
+        } else {
+            startWifiScanner();
         }
 
         Log.i(TAG, "onCreate: after permission check");
@@ -116,8 +120,6 @@ public class MainSamplerActivity extends AppCompatActivity {
             }
         });
 
-
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
     }
 
@@ -171,10 +173,7 @@ public class MainSamplerActivity extends AppCompatActivity {
 
                     Log.i(TAG, "onRequestPermissionsResult: all clear set");
 
-                    allClear=true;
-                    wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
-                    wifiReciever = new WifiScanReceiver();
-                    wifi.startScan();
+                    startWifiScanner();
 
                 } else {
                     Toast.makeText(MainSamplerActivity.this, "Not permitted to scan WiFi", Toast.LENGTH_SHORT).show();
@@ -184,5 +183,12 @@ public class MainSamplerActivity extends AppCompatActivity {
             // other 'case' lines to check for other permissions this app might request
             }
         }
+    }
+
+    private void startWifiScanner() {
+        allClear=true;
+        wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
+        wifiReciever = new WifiScanReceiver();
+        wifi.startScan();
     }
 }
