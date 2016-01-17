@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -31,6 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -179,7 +182,6 @@ public class MainSamplerActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainSamplerActivity.this, "Not permitted to scan WiFi", Toast.LENGTH_SHORT).show();
                 }
-                return;
 
             // other 'case' lines to check for other permissions this app might request
             }
@@ -189,7 +191,15 @@ public class MainSamplerActivity extends AppCompatActivity {
     private void startWifiScanner() {
         allClear=true;
         wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
+
+        WifiApManager apMgr=new WifiApManager(this);
+        if (apMgr.isWifiApEnabled())
+            toast("Please disable your hotspot\nOtherwise the network cannot be scanned");
         wifiReciever = new WifiScanReceiver();
         wifi.startScan();
     }
 }
+
+
+
+
