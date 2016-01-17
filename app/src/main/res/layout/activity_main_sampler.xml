@@ -58,7 +58,5 @@
         android:background="#dddddd"
         />
 
-
-
 </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

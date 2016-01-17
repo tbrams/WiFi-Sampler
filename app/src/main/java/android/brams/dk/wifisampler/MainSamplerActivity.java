@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -43,9 +45,6 @@ public class MainSamplerActivity extends AppCompatActivity {
     String wifis[], infos[];
     WifiScanReceiver wifiReciever;
 
-    private Toolbar mToolbar;
-    private Button btnSimpleSnackbar, btnActionCallback, btnCustomView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +61,16 @@ public class MainSamplerActivity extends AppCompatActivity {
 
         });
 
+        // Check permissions - if this is not already done we need to take special action
         if (ContextCompat.checkSelfPermission(MainSamplerActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            Log.i(TAG, "onCreate: We do not have the permission");
+            Log.d(TAG, "onCreate: We do not have the permission");
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(MainSamplerActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Log.i(TAG, "onCreate: we should ask...");
+                Log.d(TAG, "onCreate: we should ask...");
 
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response!
@@ -90,7 +90,7 @@ public class MainSamplerActivity extends AppCompatActivity {
                 snackbar.show();
 
             } else {
-                Log.i(TAG, "onCreate: No need to ask, we can just request");
+                Log.d(TAG, "onCreate: No need to ask, we can just request");
 
                 // No explanation needed, we can request the permission.
 
@@ -105,21 +105,22 @@ public class MainSamplerActivity extends AppCompatActivity {
             startWifiScanner();
         }
 
-        Log.i(TAG, "onCreate: after permission check");
+        Log.d(TAG, "onCreate: after permission check");
 
         iv=(ImageView)findViewById(R.id.logo_image);
-        iv.setOnClickListener(new ImageView.OnClickListener() {
+        if (allClear) {
+            iv.setOnClickListener(new ImageView.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                toast("Scanning...");
-                lv.setAdapter(new ArrayAdapter<>(getApplicationContext(), R.layout.listitem, new String[0]));
-                wifi.startScan();
+                @Override
+                public void onClick(View v) {
+                    toast("Scanning...");
+                    lv.setAdapter(new ArrayAdapter<>(getApplicationContext(), R.layout.listitem, new String[0]));
+                    wifi.startScan();
 
 
-            }
-        });
-
+                }
+            });
+        }
 
     }
 
@@ -171,7 +172,7 @@ public class MainSamplerActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Yeah - permission granted, we can sample away
 
-                    Log.i(TAG, "onRequestPermissionsResult: all clear set");
+                    Log.d(TAG, "onRequestPermissionsResult: all clear set");
 
                     startWifiScanner();
 
